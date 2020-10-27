@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Tyron Brand</Authors>
+    <Company />
+    <Description>Wrapper for tcgplayer.com API</Description>
+    <RepositoryUrl>https://github.com/tyronbrand/TCGPlayer.Net</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
