@@ -42,7 +42,9 @@ namespace TCGPlayer.Net
                 {
                     var actionParamValue = querySplit.Where(w => w.ToLower().Contains(pathParameter.ToLower())).FirstOrDefault();
                     action = AddPathParamsToAction(action, pathParameter, actionParamValue.Substring(actionParamValue.IndexOf('=') + 1));
+                    queryParams = queryParams.Replace($"&{actionParamValue}", "").Replace(actionParamValue, "");
                 }
+                query = queryParams;
             }
             else
             {
