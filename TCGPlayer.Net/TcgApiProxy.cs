@@ -106,12 +106,6 @@ namespace TCGPlayer.Net
 
             var response = await _httpClient.SendAsync(request);
             var responseString = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new TcgApiException();
-            }
-
             return new TcgApiResult<string>(responseString);
         }
 
