@@ -26,9 +26,5 @@ var result = await apiService.Execute(TcgApiUrls.Catalog.ListAllGroupsDetails, @
 </code>
 </pre>
 
-## Road Map
-- Complete Stores Endpoints
-- Refactor Integration Tests
-
 ## Other
 - API from https://docs.tcgplayer.com/docs
