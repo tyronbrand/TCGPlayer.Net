@@ -35,7 +35,7 @@ namespace TCGPlayer.Net.Dtos
         public ProductSkuDto[] Skus { get; set; }
 
         [JsonProperty("presaleInfo")]
-        public ProductPresaleInfoDto[] PresaleInfo { get; set; }
+        public ProductPresaleInfoDto PresaleInfo { get; set; }
 
         [JsonProperty("extendedData")]
         public ProductExtendedDataDto[] ExtendedData { get; set; }
