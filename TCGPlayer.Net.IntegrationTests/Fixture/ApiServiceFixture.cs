@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace TCGPlayer.Net.IntegrationTests.Fixture
 {
@@ -6,16 +7,19 @@ namespace TCGPlayer.Net.IntegrationTests.Fixture
     {
         public ITcgApiService _apiService;
 
-        public string _publicKey = "";
-        public string _privateKey = "";        
-
         public async Task CreateApiServiceAsync()
         {
-            if(_apiService == null)
+            if (_apiService == null)
             {
-                var token = await TcgApiService.Authorize(_publicKey, _privateKey);
+                var publicKey = "";
+                var privateKey = "";
+                var userAgent = "";
 
-                _apiService = TcgApiService.CreateDefaultApi(token);
+                var httpClient = new HttpClient();
+                var tcgPlayerService = new TcgApiService(httpClient);
+                await tcgPlayerService.Authorize(publicKey, privateKey, userAgent);
+
+                _apiService = tcgPlayerService;
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using TCGPlayer.Net.Models;
@@ -9,16 +10,14 @@ namespace TCGPlayer.Net
 {
     public class TcgApiService : ITcgApiService
     {
-        private readonly ITcgApiProxy _tcgApiProxy;
+        private ITcgApiProxy _tcgApiProxy;
+        private HttpClient _httpClient;
 
-        public TcgApiService(ITcgApiProxy tcgApiProxy)
+        public TcgApiService(HttpClient httpClient)
         {
-            _tcgApiProxy = tcgApiProxy;
-        }
-
-        protected TcgApiService(ITcgToken tcgToken)
-        {
-            _tcgApiProxy = new TcgApiProxy(tcgToken);
+            _httpClient = httpClient;
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _httpClient.BaseAddress = new Uri("https://api.tcgplayer.com");
         }
 
         public async Task<TcgApiResult<TResult>> Execute<TParams, TResult>(ApiActionAttributes<TParams, TResult> apiAction, TParams @params)
@@ -48,15 +47,8 @@ namespace TCGPlayer.Net
             }
         }
 
-        public static ITcgApiService CreateDefaultApi(ITcgToken tcgToken)
+        public async Task Authorize(string publicKey, string privateKey, string userAgent = null)
         {
-            return new TcgApiService(tcgToken);
-        }
-
-        public static async Task<TcgToken> Authorize(string publicKey, string privateKey, string userAgent = null, string accessToken = null)
-        {
-            var httpClient = new HttpClient();
-
             var request = new HttpRequestMessage(HttpMethod.Post, "https://api.tcgplayer.com/token")
             {
                 Content = new StringContent(
@@ -65,13 +57,10 @@ namespace TCGPlayer.Net
                 "application/json")
             };
 
-            if (!string.IsNullOrEmpty(accessToken))
-                request.Headers.Add("X-Tcg-Access-Token", accessToken);
-
             if (!string.IsNullOrEmpty(userAgent))
-                httpClient.DefaultRequestHeaders.Add("User-Agent", userAgent);
+                _httpClient.DefaultRequestHeaders.Add("User-Agent", userAgent);
 
-            var result = await httpClient.SendAsync(request);
+            var result = await _httpClient.SendAsync(request);
 
             if (result.IsSuccessStatusCode)
             {
@@ -86,7 +75,7 @@ namespace TCGPlayer.Net
                 if (!string.IsNullOrEmpty(userAgent))
                     token.UserAgent = userAgent;
 
-                return token;
+                _tcgApiProxy = new TcgApiProxy(_httpClient, token);
             }
             else
             {

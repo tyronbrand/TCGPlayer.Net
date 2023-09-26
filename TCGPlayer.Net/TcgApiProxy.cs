@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,15 +15,10 @@ namespace TCGPlayer.Net
         private readonly HttpClient _httpClient;
         private readonly ITcgToken _token;
 
-        public TcgApiProxy(ITcgToken tcgToken)
+        public TcgApiProxy(HttpClient httpClient, ITcgToken tcgToken)
         {
             _token = tcgToken;
-
-            _httpClient = new HttpClient { BaseAddress = new Uri("https://api.tcgplayer.com") };
-            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            if(!string.IsNullOrEmpty(tcgToken.UserAgent))
-                _httpClient.DefaultRequestHeaders.Add("User-Agent", tcgToken.UserAgent);
+            _httpClient = httpClient;
         }
 
         public Task<TcgApiResult<string>> Get(string action, IQueryStringParams parameters)
@@ -78,7 +72,7 @@ namespace TCGPlayer.Net
                     {
                         var actionParamValue = contentDictionary.Where(w => w.Key.ToLower().Contains(pathParameter.ToLower())).FirstOrDefault();
                         action = AddPathParamsToAction(action, pathParameter, actionParamValue.Value);
-                        contentDictionary.Remove(actionParamValue.Key);                        
+                        contentDictionary.Remove(actionParamValue.Key);
                     }
 
                     content = JsonConvert.SerializeObject(contentDictionary);

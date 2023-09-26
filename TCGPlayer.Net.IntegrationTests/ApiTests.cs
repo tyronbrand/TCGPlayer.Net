@@ -16,14 +16,7 @@ namespace TCGPlayer.Net.IntegrationTests
             ApiServiceFixture = fixture;
         }
 
-        [Fact]
-        public async Task Should_Return_Token()
-        {
-            var token = await TcgApiService.Authorize(ApiServiceFixture._publicKey, ApiServiceFixture._privateKey);
 
-            Assert.NotNull(token);
-        }        
-        
         [Fact]
         public async Task Should_List_All_Categories()
         {
@@ -161,7 +154,7 @@ namespace TCGPlayer.Net.IntegrationTests
             Assert.True(result.Success);
         }
 
-         [Fact]
+        [Fact]
         public async Task Should_List_All_Groups_Details()
         {
             await ApiServiceFixture.CreateApiServiceAsync();
